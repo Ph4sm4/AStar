@@ -44,7 +44,6 @@ MainWindow::~MainWindow()
 
 void MainWindow::PerfomAStar()
 {
-    qDebug() << "performing a star============================================================";
     QList<CustomButton*> open;
     QList<CustomButton* > closed;
 
@@ -54,15 +53,17 @@ void MainWindow::PerfomAStar()
     EndButton->G = INT_MAX;
 
     open.append(StartButton);
+    bool pathFound = false;
 
     while(!open.isEmpty()){
-        qDebug() << "----------new iteration----------";
         CustomButton* current = open.first();
-        qDebug() << current->F << ", " << current->G;
         open.removeOne(current);
         closed.append(current);
 
-        if(current == EndButton) break;
+        if(current == EndButton){
+            pathFound = true;
+            break;
+        }
 
         QList<CustomButton*> neighbours = getNeighbours(current);
         for(auto neighbour : neighbours){
@@ -80,12 +81,12 @@ void MainWindow::PerfomAStar()
                     open.append(neighbour);
                 }
             }
-            if(neighbour != EndButton){
-                QString F = QString::number(neighbour->F);
-                QString G = QString::number(neighbour->G);
-                QString H = QString::number(neighbour->H);
-                neighbour->setText(F + ":" + G + ":" + H);
-            }
+//            if(neighbour != EndButton){
+//                QString F = QString::number(neighbour->F);
+//                QString G = QString::number(neighbour->G);
+//                QString H = QString::number(neighbour->H);
+//                neighbour->setText(F + ":" + G + ":" + H);
+//            }
         }
 
         std::sort(open.begin(), open.end(), [](const CustomButton* a, const CustomButton* b)->bool {
@@ -94,17 +95,18 @@ void MainWindow::PerfomAStar()
             return a->G < b->G;
         });
     }
-    CustomButton* parent = EndButton->parent;
+    if(pathFound){
+        CustomButton* parent = EndButton->parent;
 
-    while(true){
-        if(parent == StartButton) break;
+        while(parent){
+            if(parent == StartButton) break;
 
-        parent->setStyleSheet("background-color: red;");
-        auto temp = parent->parent;
-        parent = temp;
+            parent->setStyleSheet("background-color: red;");
+            auto temp = parent->parent;
+            parent = temp;
+        }
     }
-    open.clear();
-    closed.clear();
+
 }
 
 QList<CustomButton *> MainWindow::getNeighbours(CustomButton *current)
