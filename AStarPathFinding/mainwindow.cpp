@@ -76,28 +76,28 @@ QList<CustomButton *> MainWindow::getNeighbours(CustomButton *current)
     QList<CustomButton* > output;
     CustomButton* neighbour;
 
-    if(currentX - 1 >= 0){
+    if(currentX - 1 >= 0 && !grid[currentY][currentX - 1]->bIsObstacle){
         neighbour = grid[currentY][currentX - 1];
         neighbour->H = getHeuristic(neighbour);
         neighbour->G = current->G + 1;
         neighbour->F = neighbour->H + neighbour->G;
         output.append(neighbour);
     }
-    if(currentX + 1 < columns){
+    if(currentX + 1 < columns && !grid[currentY][currentX + 1]->bIsObstacle){
         neighbour = grid[currentY][currentX + 1];
         neighbour->H = getHeuristic(neighbour);
         neighbour->G = current->G + 1;
         neighbour->F = neighbour->H + neighbour->G;
         output.append(neighbour);
     }
-    if(currentY - 1 >= 0){
+    if(currentY - 1 >= 0 && !grid[currentY - 1][currentX]->bIsObstacle){
         neighbour = grid[currentY - 1][currentX];
         neighbour->H = getHeuristic(neighbour);
         neighbour->G = current->G + 1;
         neighbour->F = neighbour->H + neighbour->G;
         output.append(neighbour);
     }
-    if(currentY + 1 < rows){
+    if(currentY + 1 < rows && !grid[currentY + 1][currentX]->bIsObstacle){
         neighbour = grid[currentY + 1][currentX];
         neighbour->H = getHeuristic(neighbour);
         neighbour->G = current->G + 1;
