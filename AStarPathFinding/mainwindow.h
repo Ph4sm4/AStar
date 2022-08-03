@@ -24,10 +24,12 @@ private:
 
     CustomButton* grid[rows][columns];
 
-    CustomButton* StartButton;
-    CustomButton* EndButton;
+    CustomButton* StartButton = nullptr;
+    CustomButton* EndButton = nullptr;
 
     void PerfomAStar();
+    QList<CustomButton*> getNeighbours(CustomButton* current);
+    int getHeuristic(CustomButton* current);
 
 public slots:
      void ButtonsGridChanged(CustomButton* changedButton);
