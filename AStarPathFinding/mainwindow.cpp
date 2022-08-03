@@ -12,14 +12,16 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
 
     QList<QHBoxLayout*> layouts = ui->verticalLayout->findChildren<QHBoxLayout*>();
+    const int INF = INT_MAX;
 
     for(int i = 0; i < rows; i++){
         for(int j = 0; j < columns; j++){
             CustomButton *customButton = new CustomButton(this);
-            customButton->setFixedSize(40, 40);
+            customButton->setFixedSize(60, 60);
             customButton->setStyleSheet("background-color: #707070;");
             customButton->x = j;
             customButton->y = i;
+            customButton->G = INF;
             layouts[i]->addWidget(customButton);
         }
     }
@@ -42,30 +44,67 @@ MainWindow::~MainWindow()
 
 void MainWindow::PerfomAStar()
 {
-    for(int i = 0; i < rows; i++){
-        for(int j = 0; j < columns; j++){
-            qDebug() << grid[i][j]->y << " " << grid[i][j]->x;
-        }
-    }
-
-    QSet<CustomButton* > open;
+    qDebug() << "performing a star============================================================";
+    QList<CustomButton*> open;
     QList<CustomButton* > closed;
 
     StartButton->G = 0;
-    open.insert(StartButton);
+    StartButton->F = 0;
+    EndButton->F = 0;
+    EndButton->G = INT_MAX;
+
+    open.append(StartButton);
 
     while(!open.isEmpty()){
-        CustomButton* current = *open.begin();
-        open.remove(current);
+        qDebug() << "----------new iteration----------";
+        CustomButton* current = open.first();
+        qDebug() << current->F << ", " << current->G;
+        open.removeOne(current);
         closed.append(current);
 
+        if(current == EndButton) break;
+
         QList<CustomButton*> neighbours = getNeighbours(current);
-        qDebug() << neighbours.size();
         for(auto neighbour : neighbours){
-            neighbour->setStyleSheet("background-color: green;");
-            qDebug() << neighbour->y << " " << neighbour->x;
+            if(neighbour->bIsObstacle || closed.contains(neighbour)) continue;
+
+            if(neighbour != EndButton)
+                neighbour->setStyleSheet("background-color: lightblue;");
+
+            if(neighbour->G > current->G + 10 || !open.contains(neighbour)){
+                neighbour->G = current->G + 10;
+                neighbour->F = neighbour->G + neighbour->H;
+                neighbour->parent = current;
+
+                if(!open.contains(neighbour)){
+                    open.append(neighbour);
+                }
+            }
+            if(neighbour != EndButton){
+                QString F = QString::number(neighbour->F);
+                QString G = QString::number(neighbour->G);
+                QString H = QString::number(neighbour->H);
+                neighbour->setText(F + ":" + G + ":" + H);
+            }
         }
+
+        std::sort(open.begin(), open.end(), [](const CustomButton* a, const CustomButton* b)->bool {
+            if(a->F != b->F) return a->F < b->F;
+
+            return a->G < b->G;
+        });
     }
+    CustomButton* parent = EndButton->parent;
+
+    while(true){
+        if(parent == StartButton) break;
+
+        parent->setStyleSheet("background-color: red;");
+        auto temp = parent->parent;
+        parent = temp;
+    }
+    open.clear();
+    closed.clear();
 }
 
 QList<CustomButton *> MainWindow::getNeighbours(CustomButton *current)
@@ -76,32 +115,24 @@ QList<CustomButton *> MainWindow::getNeighbours(CustomButton *current)
     QList<CustomButton* > output;
     CustomButton* neighbour;
 
-    if(currentX - 1 >= 0 && !grid[currentY][currentX - 1]->bIsObstacle){
+    if(currentX - 1 >= 0){
         neighbour = grid[currentY][currentX - 1];
         neighbour->H = getHeuristic(neighbour);
-        neighbour->G = current->G + 1;
-        neighbour->F = neighbour->H + neighbour->G;
         output.append(neighbour);
     }
-    if(currentX + 1 < columns && !grid[currentY][currentX + 1]->bIsObstacle){
+    if(currentX + 1 < columns){
         neighbour = grid[currentY][currentX + 1];
         neighbour->H = getHeuristic(neighbour);
-        neighbour->G = current->G + 1;
-        neighbour->F = neighbour->H + neighbour->G;
         output.append(neighbour);
     }
-    if(currentY - 1 >= 0 && !grid[currentY - 1][currentX]->bIsObstacle){
+    if(currentY - 1 >= 0){
         neighbour = grid[currentY - 1][currentX];
         neighbour->H = getHeuristic(neighbour);
-        neighbour->G = current->G + 1;
-        neighbour->F = neighbour->H + neighbour->G;
         output.append(neighbour);
     }
-    if(currentY + 1 < rows && !grid[currentY + 1][currentX]->bIsObstacle){
+    if(currentY + 1 < rows){
         neighbour = grid[currentY + 1][currentX];
         neighbour->H = getHeuristic(neighbour);
-        neighbour->G = current->G + 1;
-        neighbour->F = neighbour->H + neighbour->G;
         output.append(neighbour);
     }
 
@@ -115,7 +146,7 @@ int MainWindow::getHeuristic(CustomButton *current)
     int currentX = current->x;
     int currentY = current->y;
 
-    int h = qSqrt((endY - currentY) * (endY - currentY) + (endX - currentX) * (endX - currentX)) * 10;
+    int h = ceil(qSqrt((endY - currentY) * (endY - currentY) + (endX - currentX) * (endX - currentX)) * 10);
 
     return h;
 }
@@ -124,6 +155,7 @@ void MainWindow::ButtonsGridChanged(CustomButton* changedButton)
 {
     if(changedButton->bIsStart) StartButton = changedButton;
     else if(changedButton->bIsEnd) EndButton = changedButton;
+
 
 
     QList<CustomButton *> buttons = this->findChildren<CustomButton*>();

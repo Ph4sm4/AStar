@@ -18,7 +18,7 @@ public:
     bool bIsStart = false;
     bool bIsEnd = false;
     bool bIsObstacle = false;
-    CustomButton* parent;
+    CustomButton* parent = nullptr;
 
 protected:
     virtual void mousePressEvent(QMouseEvent *e) override;
