@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include "custombutton.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -18,6 +19,17 @@ public:
 private:
     Ui::MainWindow *ui;
 
-    void ButtonsGridChanged();
+    const static int rows = 6;
+    const static int columns = 12;
+
+    CustomButton* grid[rows][columns];
+
+    CustomButton* StartButton;
+    CustomButton* EndButton;
+
+    void PerfomAStar();
+
+public slots:
+     void ButtonsGridChanged(CustomButton* changedButton);
 };
 #endif // MAINWINDOW_H

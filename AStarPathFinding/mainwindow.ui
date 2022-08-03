@@ -15,20 +15,42 @@
   </property>
   <property name="styleSheet">
    <string notr="true">QMainWindow {
-	background-color: black;
+background-color: #808080;
 }</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QWidget" name="verticalLayoutWidget">
+   <widget class="QWidget" name="">
     <property name="geometry">
      <rect>
-      <x>300</x>
-      <y>150</y>
-      <width>160</width>
-      <height>80</height>
+      <x>160</x>
+      <y>60</y>
+      <width>711</width>
+      <height>261</height>
      </rect>
     </property>
-    <layout class="QVBoxLayout" name="verticalLayout"/>
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <property name="sizeConstraint">
+      <enum>QLayout::SetNoConstraint</enum>
+     </property>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout"/>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_3"/>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_2"/>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_6"/>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_5"/>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_4"/>
+     </item>
+    </layout>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">

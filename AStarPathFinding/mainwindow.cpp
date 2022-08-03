@@ -1,15 +1,9 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "QDebug"
-#include "custombutton.h"
 #include <QHBoxLayout>
 #include <QVBoxLayout>
-
-const int rows = 6;
-const int columns = 12;
-
-QPushButton* buttonGrid[rows][columns];
-CustomButton grid[rows][columns];
+#include <QPushButton>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -17,20 +11,18 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-    QHBoxLayout* layouts[rows];
+    QList<QHBoxLayout*> layouts = ui->verticalLayout->findChildren<QHBoxLayout*>();
+
     for(int i = 0; i < rows; i++){
-        for(int j = 0 ; j < columns; j++){
-            CustomButton *customButton = new CustomButton();
-            customButton->setFixedSize(25, 25);
+        for(int j = 0; j < columns; j++){
+            CustomButton *customButton = new CustomButton(this);
+            customButton->setFixedSize(40, 40);
             customButton->setStyleSheet("background-color: #707070;");
-            layouts[i]->addItem(dynamic_cast<QLayoutItem*>(customButton));
+            customButton->x = j;
+            customButton->y = i;
+            layouts[i]->addWidget(customButton);
         }
     }
-    for(const auto hLayout : layouts){
-        ui->verticalLayout->addItem(hLayout);
-    }
-
-    ButtonsGridChanged();
 }
 
 MainWindow::~MainWindow()
@@ -38,13 +30,42 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::ButtonsGridChanged()
+void MainWindow::PerfomAStar()
 {
+
+}
+
+void MainWindow::ButtonsGridChanged(CustomButton* changedButton)
+{
+    if(StartButton == nullptr || EndButton == nullptr) return;
+
+    qDebug()<<"grid changed";
+    if(changedButton->bIsStart) StartButton = changedButton;
+    else if(changedButton->bIsEnd) EndButton = changedButton;
+
     QList<CustomButton *> buttons = this->findChildren<CustomButton*>();
 
-    for(int i = 0; i < rows; i++){
+    for(const auto button : buttons){
+        if(button == StartButton){
+            button->setStyleSheet("background-color: gold;");
+            button->setText("S");
+        }
+        else if(button == EndButton){
+            button->setStyleSheet("background-color: gold;");
+            button->setText("E");
+        }
+        else if(button->bIsObstacle){
+            button->setStyleSheet("background-color: black;");
+            button->setText("");
+        }
+        else {
+            button->setStyleSheet("background-color: #707070;");
+            button->setText("");
+        }
+    }
+    for(int i = 1; i <= rows; i++){
         for(int j = 0; j < columns; j++){
-
+            grid[i][j] = buttons[j * i];
         }
     }
 }
