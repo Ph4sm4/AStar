@@ -1,4 +1,4 @@
-## A* graphical representation
+## A* algorithm
 My own visual representation of A* pathfinding algorithm - Created using Qt C++.
 
 #### Node explanation:
