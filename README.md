@@ -16,5 +16,9 @@ My own visual representation of A* pathfinding algorithm - Created using Qt C++.
 
 
 
-https://user-images.githubusercontent.com/78483172/183634684-4db84087-d171-4856-9c09-0bd566fbf4bc.mp4
+
+
+
+
+https://user-images.githubusercontent.com/78483172/183635031-4f6081a1-a3d6-4032-9773-80968c63f184.mp4
 
