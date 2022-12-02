@@ -10,7 +10,7 @@ My own visual representation of A* pathfinding algorithm - Created using Qt C++
 
 ### Controlls:
 - Start node can be changed using left click
-- Right node can be changed using right click
+- End node can be changed using right click
 - Walls can be added by scroll-clicking on the node
 
 
