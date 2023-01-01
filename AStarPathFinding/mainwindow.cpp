@@ -76,10 +76,15 @@ void MainWindow::PerfomAStar()
                 neighbour->G = current->G + 10;
                 neighbour->F = neighbour->G + neighbour->H;
                 neighbour->parent = current;
-
+                /*
+                    this will execute only if the node has not yet been considered
+                    or when new shortest path to that node from starting point has been found 
+                    (distance from currently considered neighbour + 10 is smaller than the previous one)
+                */
                 if(!open.contains(neighbour)){
                     open.append(neighbour);
                 }
+                
             }
 //            if(neighbour != EndButton){
 //                QString F = QString::number(neighbour->F);
@@ -148,7 +153,8 @@ int MainWindow::getHeuristic(CustomButton *current)
     int currentX = current->x;
     int currentY = current->y;
 
-    int h = ceil(qSqrt((endY - currentY) * (endY - currentY) + (endX - currentX) * (endX - currentX)) * 10);
+    int h = ceil(qSqrt((endY - currentY) * (endY - currentY) + (endX - currentX) * (endX - currentX)) * 10); 
+    // we multiply by 10 in order to ensure having integer values as distances between the nodes (between 2 neighbouring nodes distance will be 10 across and 14 diagonally)
 
     return h;
 }
